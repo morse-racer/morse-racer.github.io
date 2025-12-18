@@ -35,7 +35,40 @@ let input = document.getElementById("morseInput");
 let speedDiv = document.getElementById("speed");
 
 // عرض الجملة كحروف منفصلة
-let sentenceText = "The sun sets beautifully over the mountains";
+let choices = [
+    "The sun sets beautifully over the mountains",
+    "The river flows gently through the green valley",
+    "Tall trees sway softly in the evening wind",
+    "The sky turns orange and purple at sunset",
+    "Birds sing cheerfully at the start of the day",
+    "Fresh air fills the forest after the rain",
+    "Waves crash calmly against the rocky shore",
+    "Morning dew shines on the grass",
+    "Clouds move slowly across the blue sky",
+    "The desert looks peaceful under the stars",
+    "Flowers bloom brightly in the spring sunlight",
+    "Snow covers the hills in silent white layers",
+    "Leaves fall gently from the trees in autumn",
+    "The lake reflects the clear sky like a mirror",
+    "Thunder echoes through the distant mountains",
+    "A soft breeze cools the warm afternoon",
+    "The moon rises quietly above the trees",
+    "Rain drops tap softly on the ground",
+    "Sunlight breaks through the clouds after the storm",
+    "The ocean stretches endlessly toward the horizon",
+    "Wild animals move freely in the open land",
+    "The forest feels alive with hidden sounds",
+    "A rainbow appears after the heavy rain",
+    "The night sky sparkles with countless stars",
+    "Green fields extend as far as the eye can see",
+    "The waterfall roars between the dark rocks",
+    "The air smells fresh after a summer storm",
+    "Morning fog covers the hills softly",
+    "The earth feels warm under bare feet",
+    "Nature changes slowly with every season"
+];
+
+let sentenceText = choices[Math.floor(Math.random() * choices.length)];
 sentenceDiv.innerHTML = sentenceText.split("").map(c => c === " " ? `<span>&nbsp;</span>` : `<span>${c}</span>`).join("");
 sentenceText = sentenceText.split('').filter(char => morseMap[char.toUpperCase()]).join('');
 
