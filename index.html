@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شفرة مورس</title>
+<style>
+    body { font-family: Arial; padding: 30px; background: #f0f0f0; }
+    #sentence { font-size: 24px; margin-bottom: 20px; }
+    span { display: inline-block; }
+    .correct { color: green; font-weight: bold; }
+    #morseInput { font-size: 20px; padding: 10px; width: 100%; box-sizing: border-box; }
+    #speed { margin-top: 20px; font-size: 20px; font-weight: bold; }
+</style>
+</head>
+<body>
+<h1>اكتب الجملة بمورس واضغط مسافة لكل حرف</h1>
+<div id="sentence"></div>
+<input type="text" id="morseInput" placeholder="اكتب هنا بمورس (. و -)" autofocus>
+<div id="speed">سرعتك اللحظية: 0 حرف/دقيقة</div>
+
+<script>
+const morseMap = {
+    "A": ".-","B": "-...","C": "-.-.","D": "-..","E": ".",
+    "F": "..-.","G": "--.","H": "....","I": "..","J": ".---",
+    "K": "-.-","L": ".-..","M": "--","N": "-.","O": "---",
+    "P": ".--.","Q": "--.-","R": ".-.","S": "...","T": "-",
+    "U": "..-","V": "...-","W": ".--","X": "-..-","Y": "-.--",
+    "Z": "--..","0": "-----","1": ".----","2": "..---","3": "...--",
+    "4": "....-","5": ".....","6": "-....","7": "--...","8": "---..","9": "----."
+};
+
+let sentenceDiv = document.getElementById("sentence");
+let input = document.getElementById("morseInput");
+let speedDiv = document.getElementById("speed");
+
+// عرض الجملة كحروف منفصلة
+let sentenceText = "The sun sets beautifully over the mountains";
+sentenceDiv.innerHTML = sentenceText.split("").map(c => c === " " ? `<span>&nbsp;</span>` : `<span>${c}</span>`).join("");
+sentenceText = sentenceText.split('').filter(char => morseMap[char.toUpperCase()]).join('');
+
+let currentIndex = 0;
+let currentDivIndex = 0;
+let startTime = null;
+
+input.addEventListener("keydown", (e) => {
+    if(e.code === "Space"){
+        e.preventDefault();
+        let value = input.value.trim();
+        let currentChar = sentenceText[currentIndex].toUpperCase();
+        console.log(currentChar);
+
+        if(!startTime) startTime = new Date();
+
+        // إذا الحرف مسافة، نعتبر الضغط على Space فقط للتخطي
+        if(!morseMap.hasOwnProperty(currentChar)){
+            console.log("Not in map");
+            currentIndex++;
+            currentDivIndex++;
+            currentChar = sentenceText[currentIndex];
+        }
+
+        let expectedMorse = morseMap[currentChar?.toUpperCase()];
+        
+        input.value = "";
+        if(value === expectedMorse){
+            while(!morseMap.hasOwnProperty(sentenceDiv.children[currentDivIndex].innerText.toUpperCase())) {
+                sentenceDiv.children[currentDivIndex].classList.add("correct");
+                currentDivIndex++;
+            }
+
+            sentenceDiv.children[currentDivIndex].classList.add("correct");
+            
+            // حساب السرعة اللحظية
+            let now = new Date();
+            let timeSec = (now - startTime) / 1000;
+            let cpm = (timeSec > 0) ? Math.round((currentIndex / timeSec) * 60) : 0;
+            if(currentIndex == 0) cpm = 0;
+            speedDiv.textContent = `سرعتك اللحظية: ${cpm} حرف/دقيقة`;
+            
+            // انتهاء الجملة
+            if(currentIndex >= sentenceText.length - 1){
+                input.disabled = true;
+                speedDiv.textContent += " | انتهت الجملة!";
+            }
+            
+            currentIndex++;
+            currentDivIndex++;
+        }
+    }
+});
+</script>
+</body>
+</html>
